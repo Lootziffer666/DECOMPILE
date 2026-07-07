@@ -2,18 +2,24 @@
 
 ## Architecture Overview
 
+The app is a Next.js web app wrapped by Capacitor into a native Android app. The web app is exported statically and loaded by an Android WebView.
+
 ```
-src/
-├── app/                    # Next.js App Router
+Web layer (Next.js, static export)
+├── src/app/
 │   ├── layout.tsx          # Root layout + metadata
-│   ├── page.tsx            # Home page
+│   ├── page.tsx            # Standalone Notes app (client, localStorage)
 │   ├── globals.css         # Tailwind imports + global styles
-│   └── favicon.ico         # Site icon
-└── (expand as needed)
-    ├── components/         # React components (add when needed)
-    ├── lib/                # Utilities and helpers (add when needed)
-    └── db/                 # Database files (add via recipe)
+│   └── favicon.ico
+└── out/                    # Built static assets (generated)
+
+Native layer (Capacitor 6 / Android)
+├── capacitor.config.ts     # webDir: "out"
+└── android/                # Native Android project (committed)
+    └── app/src/main/assets/public/  # Synced web assets
 ```
+
+Build pipeline: `bun build` → `out/` → `npx cap sync android` → Gradle `assembleRelease` → signed APK.
 
 ## Key Design Patterns
 

@@ -2,13 +2,16 @@
 
 ## Technology Stack
 
-| Technology   | Version | Purpose                         |
-| ------------ | ------- | ------------------------------- |
-| Next.js      | 16.x    | React framework with App Router |
-| React        | 19.x    | UI library                      |
-| TypeScript   | 5.9.x   | Type-safe JavaScript            |
-| Tailwind CSS | 4.x     | Utility-first CSS               |
-| Bun          | Latest  | Package manager & runtime       |
+| Technology   | Version | Purpose                                      |
+| ------------ | ------- | -------------------------------------------- |
+| Next.js      | 16.x    | React framework (static export)              |
+| React        | 19.x    | UI library                                   |
+| TypeScript   | 5.9.x   | Type-safe JavaScript                         |
+| Tailwind CSS | 4.x     | Utility-first CSS                            |
+| Capacitor    | 6.x     | Wraps web app into native Android app        |
+| Bun          | Latest  | Package manager & runtime (web build)        |
+| Java (JDK)   | 17      | Android Gradle build                         |
+| Android SDK  | 34      | Target platform for the APK                  |
 
 ## Development Environment
 
@@ -22,10 +25,11 @@
 ```bash
 bun install        # Install dependencies
 bun dev            # Start dev server (http://localhost:3000)
-bun build          # Production build
-bun start          # Start production server
+bun build          # Static export to out/
 bun lint           # Run ESLint
 bun typecheck      # Run TypeScript type checking
+npx cap sync android   # Copy web assets into the Android project
+./android/gradlew assembleRelease  # Build the APK (needs Android SDK)
 ```
 
 ## Project Configuration
