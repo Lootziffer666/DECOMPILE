@@ -43,6 +43,21 @@ The same probe has been run against two user-supplied SCUMM copies without game-
 
 This demonstrates format reuse at the structural-evidence layer. It does not imply that graphics, scripts, audio, or game semantics are decoded.
 
+## Source materializer
+
+`node scripts/lab-source-materializer.mjs <archive-or-directory> [evidence.json]`
+
+This is the LAB-side port of the standalone MIXTRACT unpacker's format coverage: Psychonauts `.pkg`/ZPKG tables, generic LucasArts/Lucasfilm IFF-style chunk carving (LFL/LECF/LAB-like containers), Double Fine `.~h`/`.~p` pair detection, and ZIP central-directory listing.
+
+It is a port of MIXTRACT's format *detection and layout parsing*, not of its file output. The source tool copies matched payloads out to disk; the materializer deliberately does not carry that step over. For every entry it records only:
+
+- path/name, container offset and size;
+- a SHA-256 fingerprint for ZPKG, chunk and Double Fine entries, computed transiently in memory and never persisted as content;
+- CRC32 plus compressed/uncompressed size for ZIP entries, read directly from the central directory — ZIP payloads are never decompressed;
+- a confidence tag: `verified` for table-driven formats (ZPKG, ZIP, Double Fine pairs), `strongly-inferred` for the best-effort generic chunk carve, carrying over the source tool's own "best-effort" caveat for that path.
+
+Same boundary as the SCUMM v5 probe above: no room pixels, object images, bytecode, iMUSE audio or other payload content is decoded or emitted. Original archives remain external inputs and must never be committed or bundled with LAB — the materializer only ever writes the evidence JSON, never the files it inspected.
+
 ## Output discipline
 
 Each observation carries evidence and one confidence state: `verified`, `strongly-inferred`, `ambiguous`, or `missing`. Unrecoverable server logic, names, comments, encrypted content and dynamic behavior remain explicit gaps.
