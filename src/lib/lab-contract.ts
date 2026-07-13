@@ -7,6 +7,17 @@ export interface LabBellowsGateway {
   modelEnv: string;
   endpointPath?: "/v1/chat/completions";
   requiredForModelCalls?: true;
+  messageContracts?: {
+    text: "openai-compatible-string";
+    vision: "openai-compatible-content-parts";
+    partTypes: Array<"text" | "image_url">;
+    imageUrlDetails?: Array<"auto" | "low" | "high">;
+    imageTransports?: Array<"data-url" | "https-url">;
+  };
+  visionPayloadPolicy?: {
+    buildInlineDataAtExecution: true;
+    persistInlineImageData: false;
+  };
 }
 
 export interface LabSourceFile {
@@ -76,6 +87,19 @@ export function validateLabExtractionRequest(value: unknown): string[] {
   if (request.aiGateway?.gateway !== "bellows") errors.push("aiGateway.gateway must be bellows");
   for (const field of ["baseUrlEnv", "apiKeyEnv", "modelEnv"] as const) {
     if (!request.aiGateway?.[field]?.trim()) errors.push(`aiGateway.${field} is required`);
+  }
+  const contracts = request.aiGateway?.messageContracts;
+  if (contracts) {
+    if (contracts.vision !== "openai-compatible-content-parts") {
+      errors.push("aiGateway.messageContracts.vision must be openai-compatible-content-parts");
+    }
+    if (!contracts.partTypes?.includes("text") || !contracts.partTypes?.includes("image_url")) {
+      errors.push("aiGateway.messageContracts.partTypes must include text and image_url");
+    }
+  }
+  if (request.aiGateway?.visionPayloadPolicy?.persistInlineImageData !== undefined &&
+      request.aiGateway.visionPayloadPolicy.persistInlineImageData !== false) {
+    errors.push("aiGateway.visionPayloadPolicy.persistInlineImageData must be false");
   }
   return errors;
 }
