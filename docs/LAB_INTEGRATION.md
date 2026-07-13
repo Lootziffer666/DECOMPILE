@@ -16,6 +16,8 @@ The LAB bundle references only:
 
 The values remain local environment settings and are not serialized into evidence.
 
+ANVIL-BELLOWS now accepts OpenAI-compatible vision content parts. After a deterministic extractor has produced a local preview/frame, DECOMPILE may submit it as an ephemeral `image_url` data URL through BELLOWS for classification or comparison. The image bytes themselves must not be persisted in the LAB request or evidence envelope; only the source artifact reference, prompt, selected model, and resulting observation belong in evidence.
+
 ## SCUMM v5 probe
 
 `node scripts/lab-scumm-v5-probe.mjs MONKEY2.000 MONKEY2.001 evidence.json`
@@ -29,6 +31,17 @@ The probe is deliberately narrow and deterministic. It:
 - emits no original graphics, scripts, audio or ROM data.
 
 It does not yet decode room pixels, object images, bytecode or iMUSE semantics. Those remain subsequent evidence extractors rather than guessed output.
+
+## Verified game copies
+
+The same probe has been run against two user-supplied SCUMM copies without game-specific parser branches:
+
+| Game | Rooms | Objects | Global scripts | Local scripts | Sounds | Costumes |
+|---|---:|---:|---:|---:|---:|---:|
+| The Secret of Monkey Island | 86 | 1,027 | 187 | 389 | 138 | 123 |
+| Monkey Island 2 | 110 | 1,145 | 167 | 612 | 199 | 164 |
+
+This demonstrates format reuse at the structural-evidence layer. It does not imply that graphics, scripts, audio, or game semantics are decoded.
 
 ## Output discipline
 
